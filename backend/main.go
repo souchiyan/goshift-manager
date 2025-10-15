@@ -12,14 +12,13 @@ import (
 func main() {
 	database.InitDatabase() //データベース初期化
 	http.HandleFunc("/todos", corsMiddleware(postTodoHandler))
+	http.HandleFunc("/show", corsMiddleware(getTodoHandler))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 	fmt.Println("localhost:8080で起動中")
 
 }
 
 func postTodoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	if r.Method != http.MethodPost {
 		http.Error(w, "このメソッドは許可されていません", http.StatusInternalServerError)
 		return
@@ -41,11 +40,25 @@ func postTodoHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("データの登録が完了しました")
 }
 
+func getTodoHandler(w http.ResponseWriter, r *http.Request) {
+	var todos []model.Todo
+
+	db := database.DB
+	if err := db.Find(&todos).Error; err != nil {
+		http.Error(w, "データを表示できません", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(todos)
+
+	fmt.Println("データベースからの送信完了")
+}
+
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001") // ReactのURL
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Content-Type", "application/json")
 
 		if r.Method == http.MethodOptions {
 			// プリフライトリクエストのときは処理を止めてOKを返す
