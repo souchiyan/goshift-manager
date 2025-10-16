@@ -13,6 +13,7 @@ func main() {
 	database.InitDatabase() //データベース初期化
 	http.HandleFunc("/todos", corsMiddleware(postTodoHandler))
 	http.HandleFunc("/show", corsMiddleware(getTodoHandler))
+	http.HandleFunc("/delete/", corsMiddleware(deleteTodoHandler))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 	fmt.Println("localhost:8080で起動中")
 
@@ -41,6 +42,10 @@ func postTodoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTodoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "このメソッドは許可されていません", http.StatusInternalServerError)
+		return
+	}
 	var todos []model.Todo
 
 	db := database.DB
@@ -53,10 +58,26 @@ func getTodoHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("データベースからの送信完了")
 }
 
+func deleteTodoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "このメソッドは許可されていません", http.StatusInternalServerError)
+		return
+	}
+
+	id := r.URL.Path[len("/delete/"):]
+	db := database.DB
+	if err := db.Delete(&model.Todo{}, id).Error; err != nil {
+		http.Error(w, "データベースの削除に失敗しました。存在しません", http.StatusInternalServerError)
+	}
+
+	fmt.Println("データの削除に成功しました")
+
+}
+
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001") // ReactのURL
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json")
 

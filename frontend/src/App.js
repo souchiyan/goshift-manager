@@ -27,13 +27,28 @@ function App() {
     const res = await axios.get("http://localhost:8080/show");
     setTodos(res.data);
   }
-  
+
+  const deletehandler = async (id) => {
+    try {
+      const res = await axios.delete(`http://localhost:8080/delete/${id}`);
+      fetchTodos();
+      console.log("削除のためのリクエスト成功", res.data);
+    } catch (err) {
+      console.log("削除のためのリクエスト失敗");
+      return;
+    }
+  };
   return (
     <div>
       <h1>ここはTodoアプリの中身です</h1>
       <ul>
         {todos.map((item) => (
-          <li key={item.id}>{item.todo}</li>
+          <li key={item.id}>
+            {item.todo}
+            <button type="button" onClick={() => deletehandler(item.id)}>
+              削除
+            </button>
+          </li>
         ))}
       </ul>
 
