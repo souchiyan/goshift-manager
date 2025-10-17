@@ -14,6 +14,7 @@ func main() {
 	http.HandleFunc("/todos", corsMiddleware(postTodoHandler))
 	http.HandleFunc("/show", corsMiddleware(getTodoHandler))
 	http.HandleFunc("/delete/", corsMiddleware(deleteTodoHandler))
+	http.HandleFunc("/update/", corsMiddleware(updateTodoHandler))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 	fmt.Println("localhost:8080で起動中")
 
@@ -74,10 +75,30 @@ func deleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func updateTodoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "このメソッドは許可されていません", http.StatusInternalServerError)
+		return
+	}
+	var todo model.Todo
+	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
+		http.Error(w, "Invalid request body", http.StatusInternalServerError)
+		return
+	}
+	id := r.URL.Path[len("/update/"):]
+	db := database.DB
+	if err := db.Model(&model.Todo{}).Where("id = ?", id).Update("is_checked", todo.IsChecked).Error; err != nil {
+		http.Error(w, "データベースの更新に失敗しました。トグルが作用しません", http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(todo)
+
+	fmt.Println("データの更新に成功しました")
+}
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001") // ReactのURL
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json")
 
