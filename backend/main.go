@@ -27,6 +27,7 @@ func postTodoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var todo model.Todo
+
 	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
 		http.Error(w, "Invalid request body", http.StatusInternalServerError)
 		return
