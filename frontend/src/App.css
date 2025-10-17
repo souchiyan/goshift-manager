@@ -1,0 +1,142 @@
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  width: 600px;
+  margin: 40px auto;
+  background: white;
+  border-radius: 12px;
+  padding: 30px 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2d3436;
+}
+
+.todo-form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.priority-select {
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 16px;
+}
+
+.add-btn {
+  margin-left: 10px;
+  background-color: #0984e3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background-color: #74b9ff;
+}
+
+.todo-section {
+  margin-top: 30px;
+}
+
+.todo-section h2 {
+  color: #2d3436;
+  margin-bottom: 10px;
+  border-left: 4px solid #0984e3;
+  padding-left: 8px;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  transition: transform 0.1s ease;
+}
+
+.todo-item:hover {
+  transform: scale(1.01);
+}
+
+.todo-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todo-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.priority-tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.priority-tag.low {
+  background-color: #dfe6e9;
+  color: #2d3436;
+}
+
+.priority-tag.medium {
+  background-color: #ffeaa7;
+  color: #b07a00;
+}
+
+.priority-tag.high {
+  background-color: #fab1a0;
+  color: #d63031;
+}
+
+.delete-btn {
+  background-color: #d63031;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #ff7675;
+}
+
+.done {
+  color: #888;
+  text-decoration: line-through;
+  background-color: #ecf0f1;
+}
